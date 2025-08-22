@@ -1,0 +1,166 @@
+/* 🌿 Features Section Container */
+.features-section {
+  padding: 3rem 1rem 2rem 1rem;
+  background: linear-gradient(180deg, #f0fdf4 0%, #e2f7ea 100%);
+  font-family: 'Poppins', Arial, Helvetica, sans-serif;
+}
+
+/* 🧱 Centered Content Container */
+.features-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+/* ✨ Section Title & Subtitle */
+.features-title {
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: #204d2a;
+  text-align: center;
+  margin-bottom: 0.6rem;
+  transition: color 0.3s ease;
+}
+
+.features-subtitle {
+  font-size: 1.2rem;
+  color: #33663a;
+  text-align: center;
+  margin-bottom: 2rem;
+  transition: color 0.3s ease;
+}
+
+/* 🔲 Responsive Feature Grid */
+.features-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  padding: 0 0.5rem;
+}
+
+@media (min-width: 768px) {
+  .features-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .features-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* 📦 Feature Cards */
+.feature-card {
+  background: #ffffff;
+  border-radius: 1.2rem;
+  box-shadow: 0 8px 24px rgba(35, 81, 40, 0.1);
+  padding: 2rem 1.6rem;
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+
+.feature-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 36px rgba(35, 81, 40, 0.2);
+  border: 1px solid #a3d9b1;
+}
+
+/* 🌟 Animated Gradient Edge (on hover) */
+.feature-card::before {
+  content: '';
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  bottom: -3px;
+  left: -3px;
+  background: linear-gradient(135deg, #7ecf96, #c4f4d4);
+  z-index: 0;
+  opacity: 0;
+  border-radius: 1.3rem;
+  transition: opacity 0.3s ease;
+}
+
+.feature-card:hover::before {
+  opacity: 0.15;
+}
+
+/* 🪴 Icon Container */
+.feature-icon-bg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  margin-bottom: 1.4rem;
+  background: #e6f4ea;
+  transition: transform 0.3s ease, background 0.3s ease;
+}
+
+.feature-card:hover .feature-icon-bg {
+  background: #d3f0de;
+  transform: rotate(3deg) scale(1.05);
+}
+
+/* 🌱 Lucide Icon Style */
+.feature-icon {
+  color: #235128;
+  font-size: 2rem;
+  transition: transform 0.3s ease;
+}
+
+.feature-icon:hover {
+  transform: scale(1.2);
+}
+
+/* 📝 Card Title */
+.feature-card-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #204d2a;
+  margin-bottom: 0.6rem;
+  transition: color 0.3s ease;
+}
+
+/* 📄 Description */
+.feature-desc {
+  color: #335e3b;
+  margin-bottom: 1.4rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  transition: color 0.3s ease;
+}
+
+/* 🔗 Learn More Link */
+.feature-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  color: #c0392b;
+  font-weight: 500;
+  font-size: 1rem;
+  text-decoration: none;
+  margin-top: auto;
+  transition: color 0.25s ease;
+}
+
+.feature-link:hover {
+  color: #a93226;
+  text-decoration: underline;
+}
+
+/* ➡️ Arrow Movement */
+.feature-link-arrow {
+  font-size: 1.1em;
+  margin-left: 0.2em;
+  transition: transform 0.25s ease;
+}
+
+.feature-link:hover .feature-link-arrow {
+  transform: translateX(5px);
+}

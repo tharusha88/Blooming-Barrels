@@ -1,0 +1,47 @@
+-- Copy and paste this in phpMyAdmin SQL tab:
+
+USE blooming_barrels;
+
+-- Clear existing images and start fresh
+DELETE FROM product_images;
+
+-- Add 5 images to each product
+-- Product 1: Ceramic Plant Pot
+INSERT INTO product_images (product_id, image_url, alt_text, display_order, is_primary, image_type) VALUES 
+(1, '/images/ceramic-pot.jpg', 'Ceramic Plant Pot - Main', 1, TRUE, 'main'),
+(1, '/images/ceramic-pot-black.jpg', 'Ceramic Plant Pot - View 2', 2, FALSE, 'gallery'),
+(1, '/images/ceramic-pot-side.jpg', 'Ceramic Plant Pot - View 3', 3, FALSE, 'gallery'),
+(1, '/images/ceramic-pot-top.jpg', 'Ceramic Plant Pot - View 4', 4, FALSE, 'gallery'),
+(1, '/images/ceramic-pot-white.jpg', 'Ceramic Plant Pot - View 5', 5, FALSE, 'gallery');
+
+-- Product 2: Glazed Decorative Pot
+INSERT INTO product_images (product_id, image_url, alt_text, display_order, is_primary, image_type) VALUES 
+(2, '/images/glazed.jpg', 'Glazed Pot - Main', 1, TRUE, 'main'),
+(2, '/images/glazed-blue.jpg', 'Glazed Pot - View 2', 2, FALSE, 'gallery'),
+(2, '/images/glazed-detail.jpg', 'Glazed Pot - View 3', 3, FALSE, 'gallery'),
+(2, '/images/glazed-green.jpg', 'Glazed Pot - View 4', 4, FALSE, 'gallery'),
+(2, '/images/coco-planter.jpg', 'Glazed Pot - View 5', 5, FALSE, 'gallery');
+
+-- Product 3: Self-Watering Planter
+INSERT INTO product_images (product_id, image_url, alt_text, display_order, is_primary, image_type) VALUES 
+(3, '/images/self-watering.jpg', 'Self-Watering - Main', 1, TRUE, 'main'),
+(3, '/images/self-watering-black.jpg', 'Self-Watering - View 2', 2, FALSE, 'gallery'),
+(3, '/images/self-watering-gray.jpg', 'Self-Watering - View 3', 3, FALSE, 'gallery'),
+(3, '/images/self-watering-gray.jpg', 'Self-Watering - View 4', 4, FALSE, 'gallery'),
+(3, '/images/coco-planter.jpg', 'Self-Watering - View 5', 5, FALSE, 'gallery');
+
+-- Product 4: Herb Garden Kit
+INSERT INTO product_images (product_id, image_url, alt_text, display_order, is_primary, image_type) VALUES 
+(4, '/images/herb-pot.jpg', 'Herb Kit - Main', 1, TRUE, 'main'),
+(4, '/images/herb-pot-natural.jpg', 'Herb Kit - View 2', 2, FALSE, 'gallery'),
+(4, '/images/herb-kit-planted.jpg', 'Herb Kit - View 3', 3, FALSE, 'gallery'),
+(4, '/images/herb-kit-contents.jpg', 'Herb Kit - View 4', 4, FALSE, 'gallery'),
+(4, '/images/coco-planter.jpg', 'Herb Kit - View 5', 5, FALSE, 'gallery');
+
+-- Product 5: Large Planter
+INSERT INTO product_images (product_id, image_url, alt_text, display_order, is_primary, image_type) VALUES 
+(5, '/images/large-planter-black.jpg', 'Large Planter - Main', 1, TRUE, 'main'),
+(5, '/images/large-planter-brown.jpg', 'Large Planter - View 2', 2, FALSE, 'gallery'),
+(5, '/images/glazed.jpg', 'Large Planter - View 3', 3, FALSE, 'gallery'),
+(5, '/images/large-planter-planted.jpg', 'Large Planter - View 4', 4, FALSE, 'gallery'),
+(5, '/images/herb-pot.jpg', 'Large Planter - View 5', 5, FALSE, 'gallery');

@@ -1,0 +1,170 @@
+.cart-modal {
+  position: fixed;
+  z-index: 1000; /* Use a high value to ensure it's on top */
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(34, 53, 41, 0.12);
+}
+.cart-modal-content {
+  background: #fff;
+  border-radius: 18px;
+  padding: 2.2rem 2.5rem;
+  min-width: 340px;
+  max-width: 95vw;
+  max-height: 80vh;
+  box-shadow: 0 8px 32px rgba(70,100,61,0.10);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.cart-modal-title {
+  margin: 0 0 1.2rem 0;
+  font-weight: 700;
+  font-size: 1.35rem;
+  color: #234b27;
+}
+.cart-modal-empty {
+  color: #888;
+  font-size: 1.05rem;
+}
+.cart-modal-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  max-height: 38vh;
+  overflow-y: auto;
+}
+.cart-modal-item {
+  margin-bottom: 1.1rem;
+  border-bottom: 1px solid #ececec;
+  padding-bottom: 0.7rem;
+  font-size: 1.01rem;
+  color: #234b27;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.cart-modal-item-name {
+  font-weight: 600;
+}
+.cart-modal-qty-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.2rem;
+}
+.cart-modal-qty-btn {
+  border: none;
+  background: #f5f5f5;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.cart-modal-qty-value {
+  min-width: 18px;
+  text-align: center;
+}
+.cart-modal-remove-btn {
+  margin-top: 0.4rem;
+  color: #b71c1c;
+  background: none;
+  border: none;
+  font-size: 0.97rem;
+  cursor: pointer;
+  align-self: flex-end;
+}
+.cart-modal-total {
+  font-weight: 700;
+  margin-top: 1.2rem;
+  font-size: 1.13rem;
+  color: #234b27;
+  align-self: flex-end;
+}
+.cart-modal-clear-btn {
+  margin-top: 1.2rem;
+  background: #f5f5f5;
+  color: #234b27;
+  border: none;
+  border-radius: 8px;
+  padding: 0.6rem 1.3rem;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+}
+.cart-modal-close-btn {
+  margin-top: 1.2rem;
+  background: none;
+  color: #888;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+}
+.login-modal-overlay {
+  position: fixed;
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  background: rgba(34, 53, 41, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.login-modal {
+  background: #fff;
+  border-radius: 20px;
+  padding: 2rem;
+  min-width: 320px;
+  box-shadow: 0 8px 32px rgba(70,100,61,0.13);
+}
+.custom-modal {
+  position: fixed;
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  background: rgba(34, 53, 41, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.custom-box {
+  background: #fff;
+  border-radius: 18px;
+  padding: 2.2rem 2.5rem;
+  min-width: 340px;
+  max-width: 95vw;
+  max-height: 80vh;
+  box-shadow: 0 8px 32px rgba(70,100,61,0.10);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+}
+
+.site-logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.nav-links {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.cart-container {
+  order: -1; /* Moves cart to the start of the flex row */
+  margin-left: 0; /* Remove auto margin */
+  font-size: 1.2rem;
+  cursor: pointer;
+}

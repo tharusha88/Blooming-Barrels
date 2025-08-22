@@ -1,0 +1,276 @@
+<?php
+// config/Database.php
+class Database {
+    private $host = 'localhost';
+    private $db_name = 'blooming_barrels';
+    private $username = 'root';
+    private $password = '';
+    public $conn;
+
+    public function getConnection() {
+        $this->conn = null;
+        
+        try {
+            $this->conn = new PDO("mysql:host=" . $this->host . ";dbname=" . $this->db_name, 
+                                $this->username, $this->password);
+            $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        } catch(PDOException $exception) {
+            echo "Connection error: " . $exception->getMessage();
+        }
+        
+        return $this->conn;
+    }
+}
+
+// models/Product.php
+class Product {
+    private $conn;
+    private $table_name = "products";
+
+    public $id;
+    public $name;
+    public $description;
+    public $price;
+    public $original_price;
+    public $rating;
+    public $review_count;
+    public $images;
+    public $colors;
+    public $sizes;
+    public $features;
+    public $care_instructions;
+    public $stock_quantity;
+    public $category_id;
+    public $created_at;
+    public $updated_at;
+
+    public function __construct($db) {
+        $this->conn = $db;
+    }
+
+    // Get single product by ID
+    public function read_single() {
+        $query = "SELECT 
+                    p.id, p.name, p.description, p.price, p.original_price, 
+                    p.rating, p.review_count, p.images, p.colors, p.sizes, 
+                    p.features, p.care_instructions, p.stock_quantity, 
+                    p.category_id, p.created_at, p.updated_at,
+                    c.name as category_name
+                  FROM " . $this->table_name . " p
+                  LEFT JOIN categories c ON p.category_id = c.id
+                  WHERE p.id = ? LIMIT 0,1";
+
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(1, $this->id);
+        $stmt->execute();
+
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if($row) {
+            $this->name = $row['name'];
+            $this->description = $row['description'];
+            $this->price = $row['price'];
+            $this->original_price = $row['original_price'];
+            $this->rating = $row['rating'];
+            $this->review_count = $row['review_count'];
+            $this->images = json_decode($row['images'], true);
+            $this->colors = json_decode($row['colors'], true);
+            $this->sizes = json_decode($row['sizes'], true);
+            $this->features = json_decode($row['features'], true);
+            $this->care_instructions = json_decode($row['care_instructions'], true);
+            $this->stock_quantity = $row['stock_quantity'];
+            $this->category_id = $row['category_id'];
+            $this->created_at = $row['created_at'];
+            $this->updated_at = $row['updated_at'];
+            return true;
+        }
+        return false;
+    }
+
+    // Get all products
+    public function read() {
+        $query = "SELECT 
+                    p.id, p.name, p.description, p.price, p.original_price, 
+                    p.rating, p.review_count, p.images, p.colors, p.sizes, 
+                    p.features, p.care_instructions, p.stock_quantity, 
+                    p.category_id, p.created_at, p.updated_at,
+                    c.name as category_name
+                  FROM " . $this->table_name . " p
+                  LEFT JOIN categories c ON p.category_id = c.id
+                  ORDER BY p.created_at DESC";
+
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+        return $stmt;
+    }
+
+    // Get related products
+    public function getRelatedProducts($limit = 4) {
+        $query = "SELECT 
+                    p.id, p.name, p.price, p.rating, p.review_count, p.images
+                  FROM " . $this->table_name . " p
+                  WHERE p.category_id = ? AND p.id != ?
+                  ORDER BY p.rating DESC
+                  LIMIT ?";
+
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(1, $this->category_id);
+        $stmt->bindParam(2, $this->id);
+        $stmt->bindParam(3, $limit, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt;
+    }
+
+    // Create product
+    public function create() {
+        $query = "INSERT INTO " . $this->table_name . "
+                  SET name=:name, description=:description, price=:price, 
+                      original_price=:original_price, images=:images, 
+                      colors=:colors, sizes=:sizes, features=:features, 
+                      care_instructions=:care_instructions, stock_quantity=:stock_quantity, 
+                      category_id=:category_id";
+
+        $stmt = $this->conn->prepare($query);
+
+        // Sanitize
+        $this->name = htmlspecialchars(strip_tags($this->name));
+        $this->description = htmlspecialchars(strip_tags($this->description));
+        $this->price = htmlspecialchars(strip_tags($this->price));
+        $this->original_price = htmlspecialchars(strip_tags($this->original_price));
+        $this->stock_quantity = htmlspecialchars(strip_tags($this->stock_quantity));
+        $this->category_id = htmlspecialchars(strip_tags($this->category_id));
+
+        // Bind data
+        $stmt->bindParam(":name", $this->name);
+        $stmt->bindParam(":description", $this->description);
+        $stmt->bindParam(":price", $this->price);
+        $stmt->bindParam(":original_price", $this->original_price);
+        $stmt->bindParam(":images", json_encode($this->images));
+        $stmt->bindParam(":colors", json_encode($this->colors));
+        $stmt->bindParam(":sizes", json_encode($this->sizes));
+        $stmt->bindParam(":features", json_encode($this->features));
+        $stmt->bindParam(":care_instructions", json_encode($this->care_instructions));
+        $stmt->bindParam(":stock_quantity", $this->stock_quantity);
+        $stmt->bindParam(":category_id", $this->category_id);
+
+        if($stmt->execute()) {
+            return true;
+        }
+        return false;
+    }
+
+    // Update product
+    public function update() {
+        $query = "UPDATE " . $this->table_name . "
+                  SET name = :name, description = :description, price = :price,
+                      original_price = :original_price, images = :images,
+                      colors = :colors, sizes = :sizes, features = :features,
+                      care_instructions = :care_instructions, stock_quantity = :stock_quantity,
+                      category_id = :category_id, updated_at = CURRENT_TIMESTAMP
+                  WHERE id = :id";
+
+        $stmt = $this->conn->prepare($query);
+
+        // Sanitize
+        $this->name = htmlspecialchars(strip_tags($this->name));
+        $this->description = htmlspecialchars(strip_tags($this->description));
+        $this->price = htmlspecialchars(strip_tags($this->price));
+        $this->original_price = htmlspecialchars(strip_tags($this->original_price));
+        $this->stock_quantity = htmlspecialchars(strip_tags($this->stock_quantity));
+        $this->category_id = htmlspecialchars(strip_tags($this->category_id));
+        $this->id = htmlspecialchars(strip_tags($this->id));
+
+        // Bind data
+        $stmt->bindParam(":name", $this->name);
+        $stmt->bindParam(":description", $this->description);
+        $stmt->bindParam(":price", $this->price);
+        $stmt->bindParam(":original_price", $this->original_price);
+        $stmt->bindParam(":images", json_encode($this->images));
+        $stmt->bindParam(":colors", json_encode($this->colors));
+        $stmt->bindParam(":sizes", json_encode($this->sizes));
+        $stmt->bindParam(":features", json_encode($this->features));
+        $stmt->bindParam(":care_instructions", json_encode($this->care_instructions));
+        $stmt->bindParam(":stock_quantity", $this->stock_quantity);
+        $stmt->bindParam(":category_id", $this->category_id);
+        $stmt->bindParam(":id", $this->id);
+
+        if($stmt->execute()) {
+            return true;
+        }
+        return false;
+    }
+
+    // Delete product
+    public function delete() {
+        $query = "DELETE FROM " . $this->table_name . " WHERE id = ?";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(1, $this->id);
+
+        if($stmt->execute()) {
+            return true;
+        }
+        return false;
+    }
+}
+
+// models/Review.php
+class Review {
+    private $conn;
+    private $table_name = "reviews";
+
+    public $id;
+    public $product_id;
+    public $customer_name;
+    public $rating;
+    public $comment;
+    public $helpful_count;
+    public $not_helpful_count;
+    public $created_at;
+
+    public function __construct($db) {
+        $this->conn = $db;
+    }
+
+    // Get reviews for a product
+    public function getProductReviews() {
+        $query = "SELECT id, customer_name, rating, comment, helpful_count, 
+                         not_helpful_count, created_at
+                  FROM " . $this->table_name . "
+                  WHERE product_id = ?
+                  ORDER BY created_at DESC";
+
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(1, $this->product_id);
+        $stmt->execute();
+        return $stmt;
+    }
+
+    // Add new review
+    public function create() {
+        $query = "INSERT INTO " . $this->table_name . "
+                  SET product_id=:product_id, customer_name=:customer_name, 
+                      rating=:rating, comment=:comment";
+
+        $stmt = $this->conn->prepare($query);
+
+        // Sanitize
+        $this->product_id = htmlspecialchars(strip_tags($this->product_id));
+        $this->customer_name = htmlspecialchars(strip_tags($this->customer_name));
+        $this->rating = htmlspecialchars(strip_tags($this->rating));
+        $this->comment = htmlspecialchars(strip_tags($this->comment));
+
+        // Bind data
+        $stmt->bindParam(":product_id", $this->product_id);
+        $stmt->bindParam(":customer_name", $this->customer_name);
+        $stmt->bindParam(":rating", $this->rating);
+        $stmt->bindParam(":comment", $this->comment);
+
+        if($stmt->execute()) {
+            return true;
+        }
+        return false;
+    }
+
+    // Update helpful count
+    public function updateHelpfulCount($is_helpful = true) {
+        $field = $is_helpful ? 'helpful_count' : 'not_helpful_count';

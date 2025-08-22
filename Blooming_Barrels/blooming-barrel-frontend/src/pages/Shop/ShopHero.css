@@ -1,0 +1,60 @@
+.shop-hero {
+    position: relative;
+    height: 480px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-image: url('/images/shop-hero-banner.jpg'); /* Replace with your banner */
+    background-size: cover;
+    background-position: center;
+    overflow: hidden;
+  }
+  
+  .hero-overlay {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 1;
+  }
+  
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    padding: 2rem;
+    color: #234b27;
+    max-width: 720px;
+  }
+  
+  .hero-heading {
+    font-size: 2.8rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+  }
+  
+  .hero-subtext {
+    font-size: 1.2rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+  }
+  
+  .hero-btn {
+    background: linear-gradient(135deg, #2f855a, #68d391);
+    color: white;
+    padding: 0.85rem 2rem;
+    border-radius: 40px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    border: none;
+    box-shadow: 0 6px 16px rgba(104, 211, 145, 0.4);
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .hero-btn:hover {
+    background: linear-gradient(135deg, #68d391, #2f855a);
+    transform: scale(1.05);
+  }
+  

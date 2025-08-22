@@ -1,0 +1,35 @@
+/* Home Page Styles */
+.home-page {
+  width: 100%;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Ensure smooth transitions between sections */
+.home-page > section {
+  width: 100%;
+  position: relative;
+}
+
+/* Remove any default margins/padding that might cause issues */
+.home-page * {
+  box-sizing: border-box;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .home-page {
+    padding: 0;
+  }
+}
+
+/* Ensure sections don't have conflicting z-indexes */
+.home-page > section {
+  z-index: 1;
+}
+
+/* Add some top margin if there's a navigation bar */
+.home-page {
+  margin-top: 0;
+  padding-top: 0;
+}

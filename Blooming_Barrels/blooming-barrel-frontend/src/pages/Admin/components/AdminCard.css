@@ -1,0 +1,49 @@
+/* AdminCard.css */
+.admin-card {
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+  overflow: hidden;
+  transition: box-shadow 0.3s ease;
+}
+
+.admin-card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.admin-card-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid #e5e5e5;
+  background: #f8f9fa;
+}
+
+.admin-card-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+.admin-card-content {
+  padding: 20px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .admin-card {
+    margin-bottom: 16px;
+  }
+  
+  .admin-card-header {
+    padding: 12px 16px;
+  }
+  
+  .admin-card-content {
+    padding: 16px;
+  }
+  
+  .admin-card-title {
+    font-size: 16px;
+  }
+}
