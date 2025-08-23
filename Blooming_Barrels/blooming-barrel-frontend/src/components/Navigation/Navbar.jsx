@@ -40,7 +40,7 @@ export default function Navbar({ cartCount = 0, user, isLoggedIn, onLogout }) {
         {isLoggedIn ? (
           <>
             <NavLink
-              to="/profile"
+              // to="/profile" (removed)
               className={({ isActive }) => isActive ? 'navbar-link active' : 'navbar-link'}
               style={{ display: 'flex', alignItems: 'center', gap: '0.4em' }}
             >

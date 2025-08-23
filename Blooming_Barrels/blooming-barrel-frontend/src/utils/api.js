@@ -1,3 +1,59 @@
+// Cart API
+export const getCart = async () => {
+  try {
+    const data = await apiCall('/api/cart');
+    return { success: true, cart: data };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+};
+
+export const addToCart = async (product_id, quantity = 1) => {
+  try {
+    const data = await apiCall('/api/cart', {
+      method: 'POST',
+      body: JSON.stringify({ product_id, quantity }),
+    });
+    return { success: true, cart: data };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+};
+
+export const updateCartItem = async (product_id, quantity) => {
+  try {
+    const data = await apiCall('/api/cart', {
+      method: 'PUT',
+      body: JSON.stringify({ product_id, quantity }),
+    });
+    return { success: true, cart: data };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+};
+
+export const removeFromCart = async (product_id) => {
+  try {
+    const data = await apiCall(`/api/cart/${product_id}`, {
+      method: 'DELETE',
+    });
+    return { success: true, cart: data };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+};
+// Update own profile (for regular users)
+export const updateOwnProfile = async (userData) => {
+  try {
+    const data = await apiCall('/api/user', {
+      method: 'PUT',
+      body: JSON.stringify(userData),
+    });
+    return { success: true, user: data.user };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+};
 // API Configuration
 const API_BASE_URL = 'http://localhost:8000';
 
@@ -102,6 +158,19 @@ export const getCurrentUser = async () => {
   try {
     const data = await apiCall('/api/user');
     return { success: true, user: data.user };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+};
+
+// Change password
+export const changePassword = async (old_password, new_password) => {
+  try {
+    const data = await apiCall('/api/user/password', {
+      method: 'PUT',
+      body: JSON.stringify({ old_password, new_password }),
+    });
+    return { success: data.success };
   } catch (error) {
     return { success: false, error: error.message };
   }

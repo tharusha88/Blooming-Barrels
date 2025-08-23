@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { CartProvider } from './context/CartContext';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
 import Home from './pages/Home'
@@ -6,8 +7,8 @@ import Shop from './pages/Shop'
 import ProductDetail from './pages/Shop/ProductDetail'
 import Learning from './pages/Learning'
 import Services from './pages/Services'
-import Profile from './pages/Profile'
-import AccountOverview from './pages/AccountOverview'
+// import Profile from './pages/Profile' (removed)
+// import AccountOverview from './pages/AccountOverview' (removed, file deleted)
 import Login from './pages/Login'
 import Blog from './pages/Blog'
 import ArticleDetails from './pages/ArticleDetails'
@@ -52,18 +53,19 @@ function App() {
   }
 
   return (
-    <Router>
-      <div className="App">
-        <Routes>
-          {/* Main Routes */}
-          <Route path="/" element={<Home />} />
-          {/* <Route path="/shop" element={<Shop />} /> */}
+    <CartProvider>
+      <Router>
+        <div className="App">
+          <Routes>
+            {/* Main Routes */}
+            <Route path="/" element={<Home />} />
+            {/* <Route path="/shop" element={<Shop />} /> */}
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/:id" element={<ArticleDetails />} />
           <Route path="/templates" element={<Templates />} />
 
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/account-overview" element={<AccountOverview />} />
+          {/* <Route path="/profile" element={<Profile />} /> removed */}
+          {/* <Route path="/account-overview" element={<AccountOverview />} /> removed, file deleted */}
 
 
           
@@ -113,6 +115,7 @@ function App() {
         />
       </div>
     </Router>
+  </CartProvider>
   )
 }
 

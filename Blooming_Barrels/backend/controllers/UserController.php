@@ -25,7 +25,13 @@ class UserController {
     public function updateUser($user_id, $data) {
         $result = $this->userModel->update($user_id, $data);
         if ($result) {
-            echo json_encode(['success' => true]);
+            // Fetch updated user
+            $user = $this->userModel->getById($user_id);
+            if ($user) {
+                unset($user['password_hash']);
+                unset($user['password']);
+            }
+            echo json_encode(['success' => true, 'user' => $user]);
         } else {
             http_response_code(400);
             echo json_encode(['success' => false, 'error' => 'Failed to update user']);

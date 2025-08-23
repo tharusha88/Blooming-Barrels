@@ -19,8 +19,15 @@ $db = (new Database())->getConnection();
 setCorsHeaders();
 handlePreflightRequest();
 
-// Start session
+
+
+// Set session cookie params for cross-origin (frontend/backend on different ports)
+session_set_cookie_params([
+    'samesite' => 'None',
+    'httponly' => true
+]);
 session_start();
+error_log('SESSION DEBUG: session_id=' . session_id() . ' | status=' . session_status() . ' | user_id=' . (isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 'not set'));
 
 // Rate limiting
 $client_ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
@@ -202,6 +209,18 @@ function handleApiRoute($endpoint, $remaining_parts, $method) {
     error_log("handleApiRoute: remaining_parts = " . print_r($remaining_parts, true));
     global $db;
     switch ($endpoint) {
+        case 'use':
+            // Example: Connect to DB and return a simple query result
+            global $db;
+            if ($method === 'GET') {
+                $result = $db->query('SELECT 1 as test');
+                $row = $result ? $result->fetch_assoc() : null;
+                echo json_encode(['success' => true, 'data' => $row]);
+            } else {
+                http_response_code(405);
+                echo json_encode(['error' => 'Method not allowed']);
+            }
+            break;
         case 'user':
             require_once __DIR__ . '/../controllers/UserController.php';
             $userController = new UserController($db);
@@ -213,6 +232,7 @@ function handleApiRoute($endpoint, $remaining_parts, $method) {
             $user_id = $_SESSION['user_id'];
             if ($method === 'GET') {
                 $userController->getCurrentUser($user_id);
+                exit;
             } elseif ($method === 'PUT') {
                 $data = json_decode(file_get_contents('php://input'), true);
                 // If changing password, use /api/user/password
@@ -220,12 +240,15 @@ function handleApiRoute($endpoint, $remaining_parts, $method) {
                     $old_password = $data['old_password'] ?? '';
                     $new_password = $data['new_password'] ?? '';
                     $userController->changePassword($user_id, $old_password, $new_password);
+                    exit;
                 } else {
                     $userController->updateUser($user_id, $data);
+                    exit;
                 }
             } else {
                 http_response_code(405);
                 echo json_encode(['error' => 'Method not allowed']);
+                exit;
             }
             break;
         }
@@ -288,6 +311,9 @@ function handleApiRoute($endpoint, $remaining_parts, $method) {
             } elseif ($method === 'POST') {
                 $data = json_decode(file_get_contents("php://input"), true);
                 $cartController->addToCart($user_id, $data['product_id'], $data['quantity']);
+            } elseif ($method === 'PUT') {
+                $data = json_decode(file_get_contents("php://input"), true);
+                $cartController->updateCartItem($user_id, $data['product_id'], $data['quantity']);
             } elseif ($method === 'DELETE') {
                 $product_id = $remaining_parts[0] ?? '';
                 $cartController->removeFromCart($user_id, $product_id);

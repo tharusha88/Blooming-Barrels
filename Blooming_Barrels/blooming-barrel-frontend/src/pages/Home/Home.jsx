@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../../components/Navigation/Navbar';
@@ -6,12 +7,13 @@ import FeaturesSection from './FeaturesSection';
 import StatsSection from './StatsSection';
 import CTASection from './CTASection';
 import { getStoredUser, getStoredToken, clearAuth } from '../../utils/jwt';
+import { useCart } from '../../context/CartContext';
 import './Home.css';
 
 const Home = () => {
   const [user, setUser] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [cartCount, setCartCount] = useState(0);
+  const { cartCount } = useCart();
   const navigate = useNavigate();
 
   // Initialize user state from localStorage
