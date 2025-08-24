@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { getCurrentUser } from '../utils/api';
 import Navbar from '../components/Navigation/Navbar';
 import './AccountOverview.css';
@@ -300,6 +301,19 @@ const AccountOverview = () => {
             <button onClick={handleChangePassword} className="btn btn-secondary">
               Change Password
             </button>
+          </div>
+        </div>
+
+        {/* Dashboard Links Section */}
+        <div className="account-section">
+          <div className="section-header">
+            <h2 className="section-title">Dashboard</h2>
+            <div className="section-divider"></div>
+          </div>
+          <div className="dashboard-links">
+            <Link to="/order-history" className="dashboard-link">My Orders</Link>
+            <Link to="/wishlist" className="dashboard-link">My Wishlist</Link>
+            <Link to="/cart" className="dashboard-link">My Cart</Link>
           </div>
         </div>
       </div>

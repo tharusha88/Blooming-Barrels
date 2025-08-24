@@ -15,18 +15,39 @@ require_once __DIR__ . '/../config/Database.php';
 global $db;
 $db = (new Database())->getConnection();
 
+
 // Handle CORS and preflight requests FIRST
-setCorsHeaders();
-handlePreflightRequest();
+header('Access-Control-Allow-Origin: http://localhost:5173');
+header('Access-Control-Allow-Credentials: true');
+header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit();
+}
+
 
 
 
 // Set session cookie params for cross-origin (frontend/backend on different ports)
+
+$cookiePath = '/';
+$cookieSecure = false; // Still HTTP for localhost
+$cookieSameSite = 'Lax'; // Use Lax for local development
 session_set_cookie_params([
-    'samesite' => 'None',
-    'httponly' => true
+    'samesite' => $cookieSameSite,
+    'secure' => $cookieSecure,
+    'httponly' => true,
+    'path' => $cookiePath,
+    // 'domain' intentionally omitted for localhost
 ]);
-session_start();
+
+// Check for output before session_start
+if (headers_sent($file, $line)) {
+    error_log("SESSION ERROR: Headers already sent in $file on line $line before session_start()");
+} else {
+    session_start();
+}
 error_log('SESSION DEBUG: session_id=' . session_id() . ' | status=' . session_status() . ' | user_id=' . (isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 'not set'));
 
 // Rate limiting
@@ -205,6 +226,25 @@ function handleAuthRoute($action, $method) {
 
 // Helper function to handle API routes with /api/ prefix
 function handleApiRoute($endpoint, $remaining_parts, $method) {
+    // /api/users/:id/orders
+    if ($endpoint === 'users' && isset($remaining_parts[0]) && is_numeric($remaining_parts[0]) && isset($remaining_parts[1]) && $remaining_parts[1] === 'orders') {
+        require_once __DIR__ . '/../controllers/OrderHistoryController.php';
+        global $db;
+        $orderHistoryController = new OrderHistoryController($db);
+        $user_id = intval($remaining_parts[0]);
+        if (!isset($_SESSION['user_id']) || $_SESSION['user_id'] != $user_id) {
+            http_response_code(401);
+            echo json_encode(['error' => 'Not authorized']);
+            return;
+        }
+        if ($method === 'GET') {
+            $orderHistoryController->getUserOrders($user_id);
+        } else {
+            http_response_code(405);
+            echo json_encode(['error' => 'Method not allowed']);
+        }
+        return;
+    }
     error_log("handleApiRoute: endpoint = " . print_r($endpoint, true));
     error_log("handleApiRoute: remaining_parts = " . print_r($remaining_parts, true));
     global $db;

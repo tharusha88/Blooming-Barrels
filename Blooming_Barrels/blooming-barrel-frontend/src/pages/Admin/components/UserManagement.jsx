@@ -6,7 +6,7 @@ import AdminTable from './AdminTable';
 import SearchBar from './SearchBar';
 import StatCard from './StatCard';
 import LoadingSpinner from './LoadingSpinner';
-import { getUsers, createUser, updateUser, deleteUser } from '../../../utils/api';
+import { getUsers } from '../../../utils/api';
 import './UserManagement.css';
 
 const UserManagement = () => {

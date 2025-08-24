@@ -3,12 +3,11 @@ import { CartProvider } from './context/CartContext';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
 import Home from './pages/Home'
+import AccountOverview from './pages/AccountOverview'
 import Shop from './pages/Shop'
 import ProductDetail from './pages/Shop/ProductDetail'
 import Learning from './pages/Learning'
 import Services from './pages/Services'
-// import Profile from './pages/Profile' (removed)
-// import AccountOverview from './pages/AccountOverview' (removed, file deleted)
 import Login from './pages/Login'
 import Blog from './pages/Blog'
 import ArticleDetails from './pages/ArticleDetails'
@@ -29,6 +28,8 @@ import { getStoredUser, getStoredToken, clearAuth } from './utils/jwt'
 import 'react-toastify/dist/ReactToastify.css'
 import './App.css'
 import ProtectedRoute from './routes/ProtectedRoute'
+import Wishlist from './pages/Wishlist'
+import OrderHistory from './pages/OrderHistory'
 
 function App() {
   const [user, setUser] = useState(null)
@@ -64,8 +65,8 @@ function App() {
           <Route path="/blog/:id" element={<ArticleDetails />} />
           <Route path="/templates" element={<Templates />} />
 
-          {/* <Route path="/profile" element={<Profile />} /> removed */}
-          {/* <Route path="/account-overview" element={<AccountOverview />} /> removed, file deleted */}
+          {/* <Route path="/profile" element={<Profile />} /> */}
+          <Route path="/account-overview" element={<AccountOverview />} />
 
 
           
@@ -83,6 +84,9 @@ function App() {
           <Route path="/cart" element={<ProtectedRoute roles={["registered_customer"]}><Cart /></ProtectedRoute>} />
           <Route path="/learning" element={<Learning />} />
           <Route path="/services" element={<Services />} />
+
+          <Route path="/wishlist" element={<ProtectedRoute roles={["registered_customer"]}><Wishlist /></ProtectedRoute>} />
+          <Route path="/order-history" element={<ProtectedRoute roles={["registered_customer"]}><OrderHistory /></ProtectedRoute>} />
 
           {/* Auth Routes */}
           <Route 

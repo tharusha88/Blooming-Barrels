@@ -6,7 +6,7 @@ import AdminTable from './AdminTable';
 import SearchBar from './SearchBar';
 import StatCard from './StatCard';
 import LoadingSpinner from './LoadingSpinner';
-import { mockProducts } from '../../../utils/api';
+
 import './ProductManagement.css';
 
 const ProductManagement = () => {
@@ -30,7 +30,7 @@ const ProductManagement = () => {
   const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
-    setProducts(mockProducts);
+  setProducts([]);
     // No backend: using mock data only
   }, []);
 

@@ -18,8 +18,15 @@ export function CartProvider({ children }) {
     setLoading(true);
     const res = await getCart();
     if (res.success) {
-      setCart(res.cart.items || []);
-      setCartCount((res.cart.items && res.cart.items.length) || 0);
+      // Support both array and object with items property
+      let items = [];
+      if (Array.isArray(res.cart)) {
+        items = res.cart;
+      } else if (res.cart && Array.isArray(res.cart.items)) {
+        items = res.cart.items;
+      }
+      setCart(items);
+      setCartCount(items.length);
     } else {
       setCart([]);
       setCartCount(0);

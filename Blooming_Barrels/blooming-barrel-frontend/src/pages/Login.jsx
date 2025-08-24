@@ -124,7 +124,7 @@ const Login = ({ setUser, setIsLoggedIn }) => {
           setIsLoggedIn(true);
 
           // Redirect to profile or dashboard
-          // navigate('/profile'); (removed)
+          navigate('/profile');
         } else {
           setErrors({ submit: result.error });
         }

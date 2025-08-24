@@ -14,12 +14,11 @@ import { toast } from 'react-toastify';
 import AdminCard from './AdminCard';
 import StatCard from './StatCard';
 import LoadingSpinner from './LoadingSpinner';
-import { mockStats, getAdminStats, getRecentActivity } from '../../../utils/api';
+import { getAdminStats } from '../../../utils/api';
 
 
 const AdminOverview = () => {
   const [stats, setStats] = useState({
-    ...mockStats,
     systemStatus: 'online',
     serverUptime: '99.9%'
   });

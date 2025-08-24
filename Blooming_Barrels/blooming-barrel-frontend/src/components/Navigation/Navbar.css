@@ -32,6 +32,8 @@
   display: flex;
   gap: 1.2rem;
   align-items: center;
+    flex: 1;
+    justify-content: center;
 }
 
 .navbar-link {

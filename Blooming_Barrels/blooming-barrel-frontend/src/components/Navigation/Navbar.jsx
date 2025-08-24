@@ -10,7 +10,7 @@ export default function Navbar({ cartCount = 0, user, isLoggedIn, onLogout }) {
         <img src="/Logo.png" alt="Logo" className="navbar-logo" />
         Blooming Barrels
       </NavLink>
-      <div className="navbar-links">
+    <div className="navbar-links navbar-center">
         <NavLink
           to="/"
           end
@@ -36,16 +36,18 @@ export default function Navbar({ cartCount = 0, user, isLoggedIn, onLogout }) {
         >
           Design
         </NavLink>
-        
+      </div>
+      <div className="navbar-account-actions">
         {isLoggedIn ? (
           <>
             <NavLink
-              // to="/profile" (removed)
+              to="/account-overview"
               className={({ isActive }) => isActive ? 'navbar-link active' : 'navbar-link'}
               style={{ display: 'flex', alignItems: 'center', gap: '0.4em' }}
+              title="Account Overview"
             >
               <FaUser style={{ fontSize: '1.15em' }} />
-              {user?.name?.split(' ')[0] || 'Profile'}
+              Account
             </NavLink>
             <button
               onClick={onLogout}
@@ -57,28 +59,13 @@ export default function Navbar({ cartCount = 0, user, isLoggedIn, onLogout }) {
             </button>
           </>
         ) : (
-          <>
-            <NavLink
-              to="/login"
-              className={({ isActive }) => isActive ? 'navbar-link active' : 'navbar-link'}
-            >
-              Login
-            </NavLink>
-            
-          </>
+          <NavLink
+            to="/login"
+            className={({ isActive }) => isActive ? 'navbar-link active' : 'navbar-link'}
+          >
+            Login
+          </NavLink>
         )}
-        
-        <NavLink
-          to="/cart"
-          className={({ isActive }) => isActive ? 'navbar-link active' : 'navbar-link'}
-          style={{ display: 'flex', alignItems: 'center', gap: '0.4em', position: 'relative' }}
-        >
-          <FaShoppingCart style={{ fontSize: '1.15em' }} />
-          Cart
-          {cartCount > 0 && (
-            <span className="cart-badge">{cartCount}</span>
-          )}
-        </NavLink>
       </div>
     </nav>
   )

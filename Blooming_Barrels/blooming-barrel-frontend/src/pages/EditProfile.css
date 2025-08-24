@@ -1,0 +1,19 @@
+.edit-profile {
+  padding: 20px;
+}
+
+.edit-profile form {
+  display: flex;
+  flex-direction: column;
+}
+
+.edit-profile input {
+  margin-bottom: 10px;
+  padding: 8px;
+}
+
+button {
+  margin-top: 10px;
+  padding: 10px;
+  cursor: pointer;
+}

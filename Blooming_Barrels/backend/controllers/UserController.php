@@ -12,8 +12,7 @@ class UserController {
     public function getCurrentUser($user_id) {
         $user = $this->userModel->getById($user_id);
         if ($user) {
-            unset($user['password_hash']);
-            unset($user['password']);
+            unset($user['password']);  // Don't send sensitive data like password
             echo json_encode(['success' => true, 'user' => $user]);
         } else {
             http_response_code(404);
@@ -28,7 +27,6 @@ class UserController {
             // Fetch updated user
             $user = $this->userModel->getById($user_id);
             if ($user) {
-                unset($user['password_hash']);
                 unset($user['password']);
             }
             echo json_encode(['success' => true, 'user' => $user]);
@@ -49,3 +47,4 @@ class UserController {
         }
     }
 }
+?>

@@ -1,76 +1,7 @@
-// Cart API
-export const getCart = async () => {
-  try {
-    const data = await apiCall('/api/cart');
-    return { success: true, cart: data };
-  } catch (error) {
-    return { success: false, error: error.message };
-  }
-};
+// Define the base URL for your API
+const API_BASE_URL = 'http://localhost:8000';  // Replace with your actual backend URL (or use environment variable for production)
 
-export const addToCart = async (product_id, quantity = 1) => {
-  try {
-    const data = await apiCall('/api/cart', {
-      method: 'POST',
-      body: JSON.stringify({ product_id, quantity }),
-    });
-    return { success: true, cart: data };
-  } catch (error) {
-    return { success: false, error: error.message };
-  }
-};
-
-export const updateCartItem = async (product_id, quantity) => {
-  try {
-    const data = await apiCall('/api/cart', {
-      method: 'PUT',
-      body: JSON.stringify({ product_id, quantity }),
-    });
-    return { success: true, cart: data };
-  } catch (error) {
-    return { success: false, error: error.message };
-  }
-};
-
-export const removeFromCart = async (product_id) => {
-  try {
-    const data = await apiCall(`/api/cart/${product_id}`, {
-      method: 'DELETE',
-    });
-    return { success: true, cart: data };
-  } catch (error) {
-    return { success: false, error: error.message };
-  }
-};
-// Update own profile (for regular users)
-export const updateOwnProfile = async (userData) => {
-  try {
-    const data = await apiCall('/api/user', {
-      method: 'PUT',
-      body: JSON.stringify(userData),
-    });
-    return { success: true, user: data.user };
-  } catch (error) {
-    return { success: false, error: error.message };
-  }
-};
-// API Configuration
-const API_BASE_URL = 'http://localhost:8000';
-
-// Debug test function - remove after testing
-export const testDatabaseSetup = async () => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/test_api_simple.php`);
-    const data = await response.json();
-    console.log('🔍 Database Setup Test:', data);
-    return data;
-  } catch (error) {
-    console.error('❌ Database test failed:', error);
-    return { success: false, error: error.message };
-  }
-};
-
-// API Helper function
+// General API Helper function
 const apiCall = async (endpoint, options = {}) => {
   const url = `${API_BASE_URL}${endpoint}`;
   const config = {
@@ -85,11 +16,11 @@ const apiCall = async (endpoint, options = {}) => {
   try {
     const response = await fetch(url, config);
     const data = await response.json();
-    
+
     if (!response.ok) {
       throw new Error(data.error || 'Request failed');
     }
-    
+
     return data;
   } catch (error) {
     console.error('API Error:', error);
@@ -97,42 +28,96 @@ const apiCall = async (endpoint, options = {}) => {
   }
 };
 
-// Authentication API
+// **Cart API** - Generalized function for adding/updating/removing from cart
+const cartApi = async (method, product_id, quantity = 1) => {
+  try {
+    const data = await apiCall(`/api/cart${product_id ? `/${product_id}` : ''}`, {
+      method,
+      body: JSON.stringify({ product_id, quantity }),
+    });
+    return { success: true, cart: data };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+};
+
+// Cart API calls (using the generalized cartApi function)
+export const getCart = async () => {
+  try {
+    const data = await apiCall('/api/cart');
+    // If backend returns {items: [...]}, wrap as { cart: { items: [...] } }
+    if (Array.isArray(data.items)) {
+      return { success: true, cart: { items: data.items } };
+    }
+    // If backend returns array directly
+    if (Array.isArray(data)) {
+      return { success: true, cart: data };
+    }
+    // Fallback: return as-is
+    return { success: true, cart: data };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+};
+
+export const addToCart = async (product_id, quantity = 1) => {
+  return await cartApi('POST', product_id, quantity);
+};
+
+export const updateCartItem = async (product_id, quantity) => {
+  return await cartApi('PUT', product_id, quantity);
+};
+
+export const removeFromCart = async (product_id) => {
+  return await cartApi('DELETE', product_id);
+};
+
+// **User API** - For updating own profile
+export const updateOwnProfile = async (userData) => {
+  try {
+    const data = await apiCall('/api/user', {
+      method: 'PUT',
+      body: JSON.stringify(userData),
+    });
+    return { success: true, user: data.user };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+};
+
+// **Authentication API**
 export const login = async (email, password) => {
   try {
     const data = await apiCall('/auth/login', {
       method: 'POST',
       body: JSON.stringify({ email, password }),
     });
-    
-    // Ensure consistent role format
+
     const user = data.user;
     if (user) {
-      // If role is a string, convert it to the expected format
       if (typeof user.role === 'string') {
         user.role = {
-          id: user.role_id || 2, // Default to regular user role if not specified
-          name: user.role.toLowerCase().replace(/\s+/g, '_')
+          id: user.role_id || 2,
+          name: user.role.toLowerCase().replace(/\s+/g, '_'),
         };
       }
-      // Ensure role_name is set
       user.role_name = user.role_name || (user.role ? user.role.name : 'user');
     }
-    
-    return { 
-      success: true, 
+
+    return {
+      success: true,
       user: user,
-      token: data.token || 'session-token' // For compatibility
+      token: data.token || 'session-token',
     };
   } catch (error) {
-    console.error('Login error:', error);
-    return { 
-      success: false, 
-      error: error.message || 'Failed to login. Please check your credentials.'
+    return {
+      success: false,
+      error: error.message || 'Failed to login. Please check your credentials.',
     };
   }
 };
 
+// Register User
 export const register = async (userData) => {
   try {
     const data = await apiCall('/auth/register', {
@@ -145,6 +130,7 @@ export const register = async (userData) => {
   }
 };
 
+// Logout
 export const logout = async () => {
   try {
     await apiCall('/auth/logout', { method: 'POST' });
@@ -154,6 +140,7 @@ export const logout = async () => {
   }
 };
 
+// Get Current User Data (for Profile)
 export const getCurrentUser = async () => {
   try {
     const data = await apiCall('/api/user');
@@ -163,7 +150,7 @@ export const getCurrentUser = async () => {
   }
 };
 
-// Change password
+// Change Password
 export const changePassword = async (old_password, new_password) => {
   try {
     const data = await apiCall('/api/user/password', {
@@ -176,33 +163,7 @@ export const changePassword = async (old_password, new_password) => {
   }
 };
 
-// Mock data for components that haven't been connected yet
-export const mockStats = {
-  totalUsers: 10,
-  totalProducts: 5,
-  totalOrders: 2,
-  totalWishlistItems: 3
-};
-
-export const mockUsers = [
-  { id: 1, name: 'Test User', email: 'test@example.com', role: 'admin' },
-  { id: 2, name: 'Jane Doe', email: 'jane@example.com', role: 'user' }
-];
-
-export const mockProducts = [
-  { id: 1, name: 'Sample Product', price: 10 },
-  { id: 2, name: 'Another Product', price: 20 }
-];
-
-// Legacy mock login function for backward compatibility
-export const mockLogin = (email, password) => {
-  if (email === 'test@example.com' && password === 'password123') {
-    return { success: true, token: 'mock-token', user: mockUsers[0] };
-  }
-  return { success: false, error: 'Invalid credentials' };
-};
-
-// Admin API
+// Admin APIs for User and Role Management
 export const getAdminStats = async () => {
   try {
     const data = await apiCall('/admin/stats');
@@ -212,24 +173,11 @@ export const getAdminStats = async () => {
   }
 };
 
-export const getRecentActivity = async () => {
-  try {
-    const data = await apiCall('/admin/activity');
-    return { success: true, data: data.data };
-  } catch (error) {
-    return { success: false, error: error.message };
-  }
-};
-
-// User Management API
+// Fetch Users
 export const getUsers = async (options = {}) => {
   try {
     const { page = 1, perPage = 10, search = '' } = options;
-    const params = new URLSearchParams({ 
-      page: page.toString(), 
-      limit: perPage.toString(), 
-      search 
-    });
+    const params = new URLSearchParams({ page: page.toString(), limit: perPage.toString(), search });
     const data = await apiCall(`/admin/users?${params}`);
     return { success: true, data: data.data };
   } catch (error) {
@@ -237,18 +185,7 @@ export const getUsers = async (options = {}) => {
   }
 };
 
-export const createUser = async (userData) => {
-  try {
-    const data = await apiCall('/admin/users', {
-      method: 'POST',
-      body: JSON.stringify(userData),
-    });
-    return { success: true, data: data.data };
-  } catch (error) {
-    return { success: false, error: error.message };
-  }
-};
-
+// Update User (Admin)
 export const updateUser = async (userId, userData) => {
   try {
     const data = await apiCall(`/admin/user/${userId}`, {
@@ -261,11 +198,10 @@ export const updateUser = async (userId, userData) => {
   }
 };
 
+// Delete User (Admin)
 export const deleteUser = async (userId) => {
   try {
-    const data = await apiCall(`/admin/user/${userId}`, {
-      method: 'DELETE',
-    });
+    const data = await apiCall(`/admin/user/${userId}`, { method: 'DELETE' });
     return { success: true, data: data.data };
   } catch (error) {
     return { success: false, error: error.message };
@@ -273,7 +209,6 @@ export const deleteUser = async (userId) => {
 };
 
 // Role Management API
-
 export const getRoles = async () => {
   try {
     const data = await apiCall('/admin/roles');
@@ -283,27 +218,7 @@ export const getRoles = async () => {
   }
 };
 
-
-export const getRoleDetails = async (roleId) => {
-  try {
-    const data = await apiCall(`/admin/roles/${roleId}`);
-    return { success: true, data: data.data };
-  } catch (error) {
-    return { success: false, error: error.message };
-  }
-};
-
-
-export const getPermissions = async () => {
-  try {
-    const data = await apiCall('/admin/permissions');
-    return { success: true, data: data.data };
-  } catch (error) {
-    return { success: false, error: error.message };
-  }
-};
-
-
+// Create Role (Admin)
 export const createRole = async (roleData) => {
   try {
     const data = await apiCall('/admin/roles', {
@@ -316,7 +231,7 @@ export const createRole = async (roleData) => {
   }
 };
 
-
+// Update Role (Admin)
 export const updateRole = async (roleId, roleData) => {
   try {
     const data = await apiCall(`/admin/roles/${roleId}`, {
@@ -329,27 +244,13 @@ export const updateRole = async (roleId, roleData) => {
   }
 };
 
-
-export const updateRolePermissions = async (roleId, permissions) => {
-  try {
-    const data = await apiCall(`/admin/role-permissions/${roleId}`, {
-      method: 'PUT',
-      body: JSON.stringify({ permissions }),
-    });
-    return { success: true, data: data.data };
-  } catch (error) {
-    return { success: false, error: error.message };
-  }
-};
-
-
+// Delete Role (Admin)
 export const deleteRole = async (roleId) => {
   try {
-    const data = await apiCall(`/admin/roles/${roleId}`, {
-      method: 'DELETE',
-    });
+    const data = await apiCall(`/admin/roles/${roleId}`, { method: 'DELETE' });
     return { success: true, data: data.data };
   } catch (error) {
     return { success: false, error: error.message };
   }
 };
+

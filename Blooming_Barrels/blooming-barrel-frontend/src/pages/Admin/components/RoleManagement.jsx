@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
-import { getPermissions, createRole, getRoles, createUser } from '../../../utils/api';
+import { createRole, getRoles } from '../../../utils/api';
 import './RoleManagement.css';
 
 const RoleManagement = () => {
@@ -106,7 +106,7 @@ const RoleManagement = () => {
   role_id: parseInt(roleId, 10)
 };
 
-      const userRes = await createUser(userPayload);
+  // const userRes = await createUser(userPayload); // Removed: createUser not implemented
 
       if (userRes.success) {
         toast.success('User created successfully');

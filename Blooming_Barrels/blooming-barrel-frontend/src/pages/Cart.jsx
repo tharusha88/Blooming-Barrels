@@ -1,12 +1,10 @@
-
-
 import React, { useState, useEffect } from 'react';
 import Navbar from '../components/Navigation/Navbar';
 import { useNavigate } from 'react-router-dom';
 import { getStoredUser, getStoredToken, clearAuth } from '../utils/jwt';
 import { updateCartItem, removeFromCart } from '../utils/api';
 import { useCart } from '../context/CartContext';
-
+import './Cart.css';
 
 export default function Cart() {
   const navigate = useNavigate();
@@ -42,57 +40,70 @@ export default function Cart() {
   };
 
   return (
-    <div>
+    <div className="cart-container">
       <Navbar
         cartCount={cartCount}
         user={user}
         isLoggedIn={isLoggedIn}
         onLogout={handleLogout}
       />
-      <div className="page-content" style={{ padding: '2rem', marginTop: '80px' }}>
-        <h1>Shopping Cart</h1>
-        <p>Your selected plants and garden supplies.</p>
+      <div className="cart-content">
+        <h1 className="cart-title">Your Garden Cart</h1>
+        <p className="cart-subtitle">Your selected plants and garden supplies.</p>
         {loading ? (
-          <p>Loading cart...</p>
+          <p className="cart-loading">Loading your cart...</p>
         ) : error ? (
-          <p style={{ color: 'red' }}>{error}</p>
+          <p className="cart-error">{error}</p>
         ) : cartCount === 0 ? (
-          <p>Your cart is empty. Start shopping to add items!</p>
+          <p className="cart-empty">Your cart is empty. Start shopping to add your favorite plants!</p>
         ) : (
-          <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '1rem' }}>
+          <div className="cart-table-wrapper">
+            <table className="cart-table">
               <thead>
                 <tr>
-                  <th style={{ borderBottom: '1px solid #ccc', padding: '8px' }}>Product</th>
-                  <th style={{ borderBottom: '1px solid #ccc', padding: '8px' }}>Price</th>
-                  <th style={{ borderBottom: '1px solid #ccc', padding: '8px' }}>Quantity</th>
-                  <th style={{ borderBottom: '1px solid #ccc', padding: '8px' }}>Total</th>
-                  <th style={{ borderBottom: '1px solid #ccc', padding: '8px' }}>Action</th>
+                  <th>Product</th>
+                  <th>Image</th>
+                  <th>Price</th>
+                  <th>Quantity</th>
+                  <th>Total</th>
+                  <th>Action</th>
                 </tr>
               </thead>
               <tbody>
                 {cart.map((item) => (
                   <tr key={item.product_id}>
-                    <td style={{ padding: '8px' }}>{item.product_name || item.name || 'Product #' + item.product_id}</td>
-                    <td style={{ padding: '8px' }}>{item.price ? `₱${item.price}` : '-'}</td>
-                    <td style={{ padding: '8px' }}>
+                    <td>{item.product_name || item.name || 'Product #' + item.product_id}</td>
+                    <td>
+                      <img 
+                        src={item.image_url || '/placeholder.png'} 
+                        alt={item.product_name || item.name || 'Product'} 
+                        className="cart-item-image"
+                      />
+                    </td>
+                    <td>{item.price ? `₱${item.price}` : '-'}</td>
+                    <td>
                       <input
                         type="number"
                         min="1"
                         value={item.quantity}
                         onChange={e => handleQuantityChange(item.product_id, parseInt(e.target.value, 10))}
-                        style={{ width: '60px' }}
+                        className="cart-quantity-input"
                       />
                     </td>
-                    <td style={{ padding: '8px' }}>{item.price ? `₱${(item.price * item.quantity).toFixed(2)}` : '-'}</td>
-                    <td style={{ padding: '8px' }}>
-                      <button onClick={() => handleRemove(item.product_id)} style={{ color: 'red' }}>Remove</button>
+                    <td>{item.price ? `₱${(item.price * item.quantity).toFixed(2)}` : '-'}</td>
+                    <td>
+                      <button 
+                        onClick={() => handleRemove(item.product_id)} 
+                        className="cart-remove-button"
+                      >
+                        Remove
+                      </button>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
-            <div style={{ marginTop: '1rem', textAlign: 'right', fontWeight: 'bold' }}>
+            <div className="cart-total">
               Total: ₱{cart.reduce((sum, item) => sum + (item.price ? item.price * item.quantity : 0), 0).toFixed(2)}
             </div>
           </div>

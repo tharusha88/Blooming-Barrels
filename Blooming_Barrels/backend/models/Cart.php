@@ -7,7 +7,7 @@ class Cart {
   }
 
   public function getUserCart($user_id) {
-    $stmt = $this->db->prepare("SELECT * FROM cart WHERE user_id = :user_id");
+    $stmt = $this->db->prepare("SELECT c.*, p.name as product_name, p.price, p.image_url FROM cart c JOIN products p ON c.product_id = p.id WHERE c.user_id = :user_id");
     $stmt->execute(['user_id' => $user_id]);
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
   }

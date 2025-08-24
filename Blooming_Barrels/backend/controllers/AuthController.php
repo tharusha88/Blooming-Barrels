@@ -10,10 +10,10 @@ class AuthController {
 
     public function __construct() {
         // Set CORS headers
-        header("Access-Control-Allow-Origin: http://localhost:3000");
-        header("Access-Control-Allow-Credentials: true");
-        header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
-        header("Access-Control-Allow-Headers: Content-Type, Authorization");
+    header("Access-Control-Allow-Origin: http://localhost:5173");
+    header("Access-Control-Allow-Credentials: true");
+    header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
+    header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
         
         // Handle preflight OPTIONS request
         if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
@@ -157,6 +157,7 @@ class AuthController {
                 $_SESSION['user_email'] = $user['email'];
                 $_SESSION['user_role'] = $user['role_name'];
                 $_SESSION['user_name'] = $user['first_name'] . ' ' . $user['last_name'];
+                error_log('LOGIN SESSION: ' . session_id() . ' user_id=' . $_SESSION['user_id']);
 
                 // Prepare user data for response
                 $userData = [

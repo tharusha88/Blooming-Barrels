@@ -1,15 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import Navbar from '../components/Navigation/Navbar';
 import './OrderHistory.css';
-import { getAuthHeaders } from '../utils/jwt';
+import { getStoredUser } from '../utils/jwt';
 
-const API_BASE = 'http://localhost/backend-php';
+const API_BASE = 'http://localhost:8000';
 
-export default function OrderHistory({ user }) {
+export default function OrderHistory() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const storedUser = getStoredUser();
+    if (storedUser) {
+      setUser(storedUser);
+    }
+  }, []);
 
   useEffect(() => {
     if (user && user.id) {
@@ -20,7 +29,10 @@ export default function OrderHistory({ user }) {
   const fetchOrders = async () => {
     try {
       const response = await fetch(`${API_BASE}/api/users/${user.id}/orders`, {
-        headers: getAuthHeaders()
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json'
+        }
       });
       if (response.ok) {
         const data = await response.json();
@@ -52,56 +64,85 @@ export default function OrderHistory({ user }) {
 
   if (loading) {
     return (
-      <div className="order-history-container">
-        <h1>Order History</h1>
-        <p>Loading orders...</p>
-      </div>
+      <>
+        <Navbar user={user} />
+        <div className="order-history-container">
+          <h1>Order History</h1>
+          <p>Loading orders...</p>
+        </div>
+      </>
     );
   }
 
   if (error) {
     return (
-      <div className="order-history-container">
-        <h1>Order History</h1>
-        <p className="error-message">{error}</p>
-        <button onClick={fetchOrders} className="retry-button">Retry</button>
-      </div>
+      <>
+        <Navbar user={user} />
+        <div className="order-history-container">
+          <h1>Order History</h1>
+          <p className="error-message">{error}</p>
+          <button onClick={fetchOrders} className="retry-button">Retry</button>
+        </div>
+      </>
     );
   }
 
   return (
-    <div className="order-history-container">
-      <div className="order-history-header">
-        <h1>Order History</h1>
-        <button onClick={() => navigate('/shop')} className="back-to-shop-btn">
-          ← Back to Shop
-        </button>
-      </div>
-
-      {orders.length === 0 ? (
-        <div className="no-orders">
-          <span role="img" aria-label="shopping bag" style={{ fontSize: '4rem', display: 'block', marginBottom: '1rem' }}>🛍️</span>
-          <h2>No Orders Yet</h2>
-          <p>Start shopping to see your order history here!</p>
-          <button onClick={() => navigate('/shop')} className="shop-now-btn">
-            Start Shopping
+    <>
+      <Navbar user={user} />
+      <div className="order-history-container">
+        <div className="order-history-header">
+          <h1>Order History</h1>
+          <button onClick={() => navigate('/shop')} className="back-to-shop-btn">
+            ← Back to Shop
           </button>
         </div>
-      ) : (
-        <div className="orders-list">
-          {orders.map((order) => (
-            <div key={order.id} className="order-card">
-              <div className="order-header">
-                <h3>Order #{order.id}</h3>
-                <span className="order-date">{formatDate(order.created_at)}</span>
+
+        {orders.length === 0 ? (
+          <div className="no-orders">
+            <span role="img" aria-label="shopping bag" style={{ fontSize: '4rem', display: 'block', marginBottom: '1rem' }}>🛍️</span>
+            <h2>No Orders Yet</h2>
+            <p>Start shopping to see your order history here!</p>
+            <button onClick={() => navigate('/shop')} className="shop-now-btn">
+              Start Shopping
+            </button>
+          </div>
+        ) : (
+          <div className="orders-list">
+            {orders.map((order) => (
+              <div key={order.id} className="order-card">
+                <div className="order-header">
+                  <h3>Order #{order.id}</h3>
+                  <span className="order-date">{formatDate(order.created_at)}</span>
+                </div>
+                <p>Status: {order.status}</p>
+                <p>Total: Rs {order.total}</p>
+                <div className="order-items-list">
+                  {order.items && order.items.length > 0 ? (
+                    order.items.map((item) => (
+                      <div key={item.product_id} className="order-item-card">
+                        <img
+                          src={item.image_url || '/placeholder.png'}
+                          alt={item.name || `Product #${item.product_id}`}
+                          className="item-image"
+                        />
+                        <div className="item-details">
+                          <h4>{item.name || `Product #${item.product_id}`}</h4>
+                          <p>Price: ₱{item.product_price || item.price}</p>
+                          <p>Quantity: {item.quantity}</p>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="no-items">No items in this order.</p>
+                  )}
+                </div>
+                <Link to={`/orders/${order.id}`}>View Details</Link>
               </div>
-              <p>Status: {order.status}</p>
-              <p>Total: Rs {order.total}</p>
-              <Link to={`/orders/${order.id}`}>View Details</Link>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </>
   );
 } 

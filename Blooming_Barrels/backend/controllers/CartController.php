@@ -27,7 +27,7 @@ class CartController {
 
   public function getCart($user_id) {
     $cartItems = $this->cartModel->getUserCart($user_id);
-    echo json_encode($cartItems);
+    echo json_encode(['items' => $cartItems]);
   }
 
 
