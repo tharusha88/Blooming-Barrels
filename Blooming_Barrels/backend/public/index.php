@@ -48,7 +48,12 @@ if (headers_sent($file, $line)) {
 } else {
     session_start();
 }
+
+// Log session debug info and incoming request headers to help diagnose missing session cookies
 error_log('SESSION DEBUG: session_id=' . session_id() . ' | status=' . session_status() . ' | user_id=' . (isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 'not set'));
+// Attempt to log incoming headers (may not exist in some server environments)
+$incoming_headers = function_exists('getallheaders') ? getallheaders() : [];
+error_log('REQUEST HEADERS: ' . json_encode($incoming_headers));
 
 // Rate limiting
 $client_ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
@@ -139,6 +144,22 @@ try {
                 'headers' => getallheaders()
             ]);
             break;
+        case 'debug':
+            // Debug endpoint: /debug/headers
+            if (!empty($uri_parts[1]) && $uri_parts[1] === 'headers') {
+                $headers = function_exists('getallheaders') ? getallheaders() : [];
+                echo json_encode([
+                    'message' => 'Debug headers',
+                    'headers' => $headers,
+                    'session' => [
+                        'id' => session_id(),
+                        'status' => session_status(),
+                        'user_id' => isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null
+                    ]
+                ]);
+                break;
+            }
+            // fallthrough to default if unknown debug route
             
         case 'products':
             // Product endpoints

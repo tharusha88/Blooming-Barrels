@@ -162,11 +162,16 @@ const ProductDetail = ({ cart, setCart, user, isLoggedIn: isLoggedInProp }) => {
       uniqueId: `${product.id}-${selectedColor}-${selectedSize}-${Date.now()}`
     };
     
-    // Store single item for direct checkout in localStorage
-    localStorage.setItem('directCheckoutItem', JSON.stringify(checkoutItem));
-    
-    // Navigate directly to checkout
-    navigate('/checkout?direct=true');
+    // Store single item for direct checkout in localStorage as a fallback
+    try {
+      localStorage.setItem('directCheckoutItem', JSON.stringify(checkoutItem));
+      console.debug('ProductDetail: saved directCheckoutItem (fallback)', checkoutItem);
+    } catch (e) {
+      console.error('ProductDetail: failed to save directCheckoutItem', e);
+    }
+
+    // Navigate to checkout and pass the item via navigation state (preferred)
+    navigate('/checkout', { state: { direct: true, item: checkoutItem } });
   };
 
   const renderStars = (rating) => {

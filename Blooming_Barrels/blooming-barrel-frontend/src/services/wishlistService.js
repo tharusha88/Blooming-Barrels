@@ -22,10 +22,9 @@ export function removeFromWishlist(productId) {
 }
 
 
-// Simple authentication check (customize as needed)
+// Unified authentication check: use the same keys as the rest of the app
 export function isAuthenticated() {
-  // Example: check for a user or token in localStorage
-  return !!localStorage.getItem('user') || !!localStorage.getItem('token');
+  return !!localStorage.getItem('blooming_barrels_user') || !!localStorage.getItem('blooming_barrels_token');
 }
 
 // Check if a product is in the wishlist

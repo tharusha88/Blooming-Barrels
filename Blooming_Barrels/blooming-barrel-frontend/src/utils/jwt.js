@@ -39,3 +39,17 @@ export const clearAuth = () => {
   removeToken();
   removeUser();
 };
+
+// Helper: whether token exists
+export const isAuthenticated = () => {
+  const t = getToken();
+  return !!t;
+};
+
+// Helper: headers for authenticated JSON requests
+export const getAuthHeaders = () => {
+  const token = getToken();
+  const headers = { 'Content-Type': 'application/json' };
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+  return headers;
+};

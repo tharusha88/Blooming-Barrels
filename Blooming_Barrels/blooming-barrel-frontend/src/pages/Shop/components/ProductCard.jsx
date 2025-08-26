@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { FaStar, FaHeart, FaRegHeart } from 'react-icons/fa';
 import { FiShoppingCart as ShoppingCart } from 'react-icons/fi';
 import { toast } from 'react-toastify';
-import wishlistService from '../../../services/wishlistService';
+import { fetchWishlist, addToWishlist, removeFromWishlist } from '../../../api/wishlistAPI';
 import "./ProductCard.css";
 
 const ProductCard = memo(function ProductCard({ name, price, image, onCustomize, product, onAddToCart, isLoggedIn }) {
@@ -15,20 +15,19 @@ const ProductCard = memo(function ProductCard({ name, price, image, onCustomize,
   // Check if product is in wishlist on component mount
   useEffect(() => {
     const checkWishlistStatus = async () => {
-      if (!isLoggedIn || !wishlistService.isAuthenticated()) {
+      if (!isLoggedIn) {
         setIsInWishlist(false);
         return;
       }
-
       try {
-        const inWishlist = await wishlistService.isInWishlist(product.id);
-        setIsInWishlist(inWishlist);
+        const wishlist = await fetchWishlist();
+        // Support both {items: [...]} and [...] response
+        const items = Array.isArray(wishlist.items) ? wishlist.items : wishlist;
+        setIsInWishlist(items.some(item => item.product_id === product.id || item.id === product.id));
       } catch (error) {
-        console.error('Error checking wishlist status:', error);
         setIsInWishlist(false);
       }
     };
-
     checkWishlistStatus();
   }, [product.id, isLoggedIn]);
 
@@ -61,36 +60,26 @@ const ProductCard = memo(function ProductCard({ name, price, image, onCustomize,
   const handleWishlistToggle = async (e) => {
     e.preventDefault();
     e.stopPropagation();
-    
-    // Check if user is logged in
-    if (!isLoggedIn || !wishlistService.isAuthenticated()) {
+    if (!isLoggedIn) {
       toast.error('Please log in to use wishlist');
       return;
     }
-    
     if (wishlistLoading) return;
-    
     setWishlistLoading(true);
-    
     try {
       if (isInWishlist) {
-        // Remove from wishlist
-        await wishlistService.removeFromWishlist(product.id);
+        await removeFromWishlist(product.id);
         setIsInWishlist(false);
         toast.success(`${name} removed from wishlist`);
       } else {
-        // Add to wishlist
-        await wishlistService.addToWishlist(product.id);
+        await addToWishlist(product.id);
         setIsInWishlist(true);
         toast.success(`${name} added to wishlist`);
       }
     } catch (error) {
       console.error('Error toggling wishlist:', error);
-      if (error.message.includes('Authentication required')) {
+      if (error.message && error.message.toLowerCase().includes('login')) {
         toast.error('Please log in to use wishlist');
-      } else if (error.message.includes('already in wishlist')) {
-        toast.info('Product is already in your wishlist');
-        setIsInWishlist(true);
       } else {
         toast.error('Failed to update wishlist. Please try again.');
       }

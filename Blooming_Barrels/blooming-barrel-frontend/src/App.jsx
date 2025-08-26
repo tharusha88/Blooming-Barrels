@@ -30,6 +30,7 @@ import './App.css'
 import ProtectedRoute from './routes/ProtectedRoute'
 import Wishlist from './pages/Wishlist'
 import OrderHistory from './pages/OrderHistory'
+import Checkout from './pages/Checkout'
 
 function App() {
   const [user, setUser] = useState(null)
@@ -87,6 +88,7 @@ function App() {
 
           <Route path="/wishlist" element={<ProtectedRoute roles={["registered_customer"]}><Wishlist /></ProtectedRoute>} />
           <Route path="/order-history" element={<ProtectedRoute roles={["registered_customer"]}><OrderHistory /></ProtectedRoute>} />
+          <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
 
           {/* Auth Routes */}
           <Route 

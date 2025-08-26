@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import './ShopCart.css';
 
-const API_BASE = 'http://localhost/backend-php';
+const API_BASE = 'http://localhost:8000';
 
 function ShopCart({ cart, setCart }) {
   const navigate = useNavigate();

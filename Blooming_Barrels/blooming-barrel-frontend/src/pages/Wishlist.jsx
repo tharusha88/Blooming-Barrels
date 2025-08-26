@@ -19,7 +19,8 @@ export default function Wishlist() {
       setUser(storedUser);
       fetchWishlistData();
     } else {
-      navigate('/login');
+      // Try to fetch wishlist anyway; if not authenticated, backend will return error
+      fetchWishlistData();
     }
     // eslint-disable-next-line
   }, []);
@@ -33,12 +34,22 @@ export default function Wishlist() {
         setWishlist(res.items);
       } else if (Array.isArray(res)) {
         setWishlist(res);
+      } else if (res && res.error === 'Please login to use wishlist') {
+        setWishlist([]);
+        setError('Please login to use wishlist');
+        navigate('/login');
       } else {
         setWishlist([]);
         setError('Failed to fetch wishlist');
       }
     } catch (err) {
-      setError('Failed to fetch wishlist');
+      // If error is auth-related, redirect to login
+      if (err.message && err.message.toLowerCase().includes('login')) {
+        setError('Please login to use wishlist');
+        navigate('/login');
+      } else {
+        setError('Failed to fetch wishlist');
+      }
       setWishlist([]);
       console.error(err);
     } finally {

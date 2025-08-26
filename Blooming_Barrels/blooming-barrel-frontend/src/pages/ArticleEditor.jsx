@@ -33,7 +33,7 @@ export default function ArticleEditor() {
   }, [id, isEdit]);
 
   useEffect(() => {
-    fetch('/api/article_categories')
+  fetch('/api/article_categories', { credentials: 'include' })
       .then(res => {
         if (!res.ok) throw new Error('Failed to load categories');
         return res.json();
@@ -48,12 +48,7 @@ export default function ArticleEditor() {
 
   const loadArticle = async () => {
     try {
-      const res = await fetch(`/api/articles/${id}`, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-          'Content-Type': 'application/json'
-        }
-      });
+  const res = await fetch(`/api/articles/${id}`, { credentials: 'include' });
       if (!res.ok) throw new Error('Failed to load article');
       const data = await res.json();
       setFormData({
@@ -93,9 +88,9 @@ export default function ArticleEditor() {
         // Create new article
         response = await fetch('/api/articles', {
           method: 'POST',
+          credentials: 'include',
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
+            'Content-Type': 'application/json'
           },
           body: JSON.stringify({
             ...formData,
@@ -112,10 +107,8 @@ export default function ArticleEditor() {
         // Update existing article
         response = await fetch(`/api/articles/${id}`, {
           method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-          },
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(formData)
         });
         data = await response.json();
@@ -152,10 +145,8 @@ export default function ArticleEditor() {
         // Create new article as published
         response = await fetch('/api/articles', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-          },
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             ...formData,
             author_id: user?.id,
@@ -169,10 +160,8 @@ export default function ArticleEditor() {
         // Update existing article to published
         response = await fetch(`/api/articles/${id}`, {
           method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-          },
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ ...formData, status: 'published' })
         });
         data = await response.json();

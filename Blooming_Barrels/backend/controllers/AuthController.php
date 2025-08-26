@@ -96,6 +96,16 @@ class AuthController {
                 $_SESSION['user_email'] = $newUser['email'];
                 $_SESSION['user_role'] = $newUser['role_name'];
                 $_SESSION['user_name'] = $newUser['first_name'] . ' ' . $newUser['last_name'];
+                // Log the session id before regenerating
+                $old_session_id = session_id();
+                error_log('REGISTER SESSION (before regenerate): ' . $old_session_id . ' user_id=' . $_SESSION['user_id']);
+                // Regenerate session id to avoid stale or hijacked sessions and force a Set-Cookie
+                session_regenerate_id(true);
+                $new_session_id = session_id();
+                error_log('REGISTER SESSION (after regenerate): ' . $new_session_id . ' user_id=' . $_SESSION['user_id']);
+                // Log session cookie settings to help debug cross-origin cookie issues
+                $session_cookie_params = session_get_cookie_params();
+                error_log('SESSION COOKIE PARAMS: ' . json_encode($session_cookie_params));
 
                 Response::json([
                     'success' => true,
@@ -157,7 +167,18 @@ class AuthController {
                 $_SESSION['user_email'] = $user['email'];
                 $_SESSION['user_role'] = $user['role_name'];
                 $_SESSION['user_name'] = $user['first_name'] . ' ' . $user['last_name'];
-                error_log('LOGIN SESSION: ' . session_id() . ' user_id=' . $_SESSION['user_id']);
+                // Log the session id before regenerating
+                $old_session_id = session_id();
+                error_log('LOGIN SESSION (before regenerate): ' . $old_session_id . ' user_id=' . $_SESSION['user_id']);
+
+                // Regenerate session id to avoid stale or hijacked sessions and force a Set-Cookie
+                session_regenerate_id(true);
+                $new_session_id = session_id();
+                error_log('LOGIN SESSION (after regenerate): ' . $new_session_id . ' user_id=' . $_SESSION['user_id']);
+
+                // Log session cookie settings to help debug cross-origin cookie issues
+                $session_cookie_params = session_get_cookie_params();
+                error_log('SESSION COOKIE PARAMS: ' . json_encode($session_cookie_params));
 
                 // Prepare user data for response
                 $userData = [

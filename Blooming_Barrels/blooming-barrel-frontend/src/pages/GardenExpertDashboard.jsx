@@ -39,7 +39,7 @@ const SectionCard = ({ title, action, children }) => (
 export default function GardenExpertDashboard() {
   const [articleCategories, setArticleCategories] = useState([]);
   useEffect(() => {
-    fetch('/api/article_categories')
+    fetch('/api/article_categories', { credentials: 'include' })
       .then(res => res.json())
       .then(data => setArticleCategories(data))
       .catch(err => console.error(err));
@@ -63,9 +63,7 @@ export default function GardenExpertDashboard() {
     setError(null);
     setRefreshing(true);
     try {
-      const res = await fetch('/api/articles', {
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-      });
+  const res = await fetch('/api/articles', { credentials: 'include' });
       if (!res.ok) throw new Error('Failed to load articles');
       let data;
       const contentType = res.headers.get('content-type');
