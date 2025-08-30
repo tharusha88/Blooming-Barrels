@@ -1,10 +1,13 @@
+import { getStoredUser } from '../utils/jwt';
 // pages/Blog.jsx
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Navbar from "../components/Navigation/Navbar";
 import "./Blog.css";
 
+
 export default function Blog() {
+  const user = getStoredUser();
   const [articles, setArticles] = useState([]);
   const [categories, setCategories] = useState([{ id: 0, name: "All" }]);
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -60,7 +63,7 @@ export default function Blog() {
 
   return (
     <>
-      <Navbar />
+  <Navbar user={user} />
       <div className="blog-page">
       {/* Hero Section */}
       <div className="blog-hero">

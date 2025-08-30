@@ -247,6 +247,22 @@ function handleAuthRoute($action, $method) {
 
 // Helper function to handle API routes with /api/ prefix
 function handleApiRoute($endpoint, $remaining_parts, $method) {
+    // Article comments: /api/article/{articleId}/comments
+    if ($endpoint === 'article' && isset($remaining_parts[0]) && is_numeric($remaining_parts[0]) && isset($remaining_parts[1]) && $remaining_parts[1] === 'comments') {
+        require_once __DIR__ . '/../controllers/ArticleCommentController.php';
+        global $db;
+        $commentController = new ArticleCommentController($db);
+        $articleId = intval($remaining_parts[0]);
+        if ($method === 'GET') {
+            $commentController->getComments($articleId);
+        } elseif ($method === 'POST') {
+            $commentController->addComment($articleId);
+        } else {
+            http_response_code(405);
+            echo json_encode(['error' => 'Method not allowed']);
+        }
+        return;
+    }
     // /api/users/:id/orders
     if ($endpoint === 'users' && isset($remaining_parts[0]) && is_numeric($remaining_parts[0]) && isset($remaining_parts[1]) && $remaining_parts[1] === 'orders') {
         require_once __DIR__ . '/../controllers/OrderHistoryController.php';

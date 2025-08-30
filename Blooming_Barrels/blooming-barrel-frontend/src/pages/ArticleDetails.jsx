@@ -1,3 +1,6 @@
+import { getStoredUser } from '../utils/jwt';
+import CommentSection from '../components/CommentSection';
+import '../components/comment-section.css';
 
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
@@ -34,6 +37,7 @@ export default function ArticleDetails() {
   if (error) return <div className="article-details-page"><div>{error}</div></div>;
   if (!article) return <div className="article-details-page"><div>Article not found.</div></div>;
 
+  const user = getStoredUser();
   return (
     <div className="article-details-page">
       <button onClick={() => navigate(-1)}>← Back</button>
@@ -48,6 +52,8 @@ export default function ArticleDetails() {
         <div className="excerpt">{article.excerpt}</div>
         <div className="content">{article.content}</div>
       </div>
+      {/* Comment Section */}
+      <CommentSection articleId={article.id} currentUser={user} />
     </div>
   );
 }

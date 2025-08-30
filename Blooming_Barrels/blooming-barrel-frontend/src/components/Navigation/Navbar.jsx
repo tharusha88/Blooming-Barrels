@@ -4,6 +4,8 @@ import { FaShoppingCart, FaUser, FaSignOutAlt } from 'react-icons/fa'
 import './Navbar.css'
 
 export default function Navbar({ cartCount = 0, user, isLoggedIn, onLogout }) {
+  // If user is present, treat as logged in
+  const loggedIn = typeof isLoggedIn !== 'undefined' ? isLoggedIn : !!user;
   return (
     <nav className="navbar">
       <NavLink to="/" className="navbar-brand">
@@ -38,7 +40,7 @@ export default function Navbar({ cartCount = 0, user, isLoggedIn, onLogout }) {
         </NavLink>
       </div>
       <div className="navbar-account-actions">
-        {isLoggedIn ? (
+        {loggedIn ? (
           <>
             <NavLink
               to="/account-overview"
